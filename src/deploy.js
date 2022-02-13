@@ -43,6 +43,6 @@ async function emptyDir(path) {
 
 export async function install(installPath) {
   await cleanDotFiles('.');
-  await emptyDir(`${installPath}/*`);
+  await emptyDir(`${installPath + '/*'}`);
   await $`cp -af * ${installPath}`;
 }

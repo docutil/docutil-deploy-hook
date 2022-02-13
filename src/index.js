@@ -41,13 +41,18 @@ async function runHook(CONFIG, siteName, authToken) {
     console.log(`[REQ] url = %s`, url);
     console.log(`[REQ] siteName = %s, token = %s`, siteName, token);
 
-    try {
-      await runHook(CONFIG, siteName, token);
-    } catch (err) {
-      console.warn(err);
-    } finally {
-      res.end('ok');
-    }
+    setTimeout(async () => {
+      try {
+        console.log(`==== begin run hook ====`);
+        await runHook(CONFIG, siteName, token);
+      } catch (err) {
+        console.warn(err);
+      } finally {
+        console.log('==== run hook completed ====');
+      }
+    }, 0);
+
+    res.end('ok');
   });
 
   server.listen(CONFIG.port, () => {
