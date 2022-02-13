@@ -5,6 +5,7 @@ import path from 'path';
 import { cd } from 'zx';
 import { getConfig } from './config';
 import { clone, install } from './deploy';
+import { JOBS } from './jobs';
 
 async function runHook(CONFIG, siteName, authToken) {
   const siteConfig = CONFIG.sites.find(it => it.id === siteName);
@@ -41,15 +42,17 @@ async function runHook(CONFIG, siteName, authToken) {
     console.log(`[REQ] url = %s`, url);
     console.log(`[REQ] siteName = %s, token = %s`, siteName, token);
 
-    setTimeout(async () => {
-      try {
-        console.log(`==== begin run hook ====`);
-        await runHook(CONFIG, siteName, token);
-      } catch (err) {
-        console.warn(err);
-      } finally {
-        console.log('==== run hook completed ====');
-      }
+    setTimeout(() => {
+      JOBS.add(async () => {
+        try {
+          console.log(`==== begin run hook ====`);
+          await runHook(CONFIG, siteName, token);
+        } catch (err) {
+          console.warn(err);
+        } finally {
+          console.log('==== run hook completed ====');
+        }
+      });
     }, 0);
 
     res.end('ok');
