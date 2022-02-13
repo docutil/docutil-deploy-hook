@@ -1,6 +1,6 @@
 ---
 port: 9000
-workspace: ws
+host: 0.0.0.0
 sites:
   - id: yuekcc
     repo_url: https://ghproxy.com/https://github.com/yuekcc/yuekcc.github.io

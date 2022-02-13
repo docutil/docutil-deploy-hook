@@ -1,28 +1,31 @@
-class JobSeq {
+class DeployJobQueue {
   constructor() {
     this._jobs = [];
     this._completed = true;
   }
 
   add(job) {
-    this._jobs.push(job);
+    console.log('[JOBS] add job');
 
+    this._jobs.push(job);
     if (this._completed) {
+      console.log('[JOBS] start parser');
       this._completed = false;
       this.run();
     }
   }
 
   async run() {
-    console.log('[JOBS] running');
-
     for (;;) {
       const job = this._jobs.pop();
       if (!job) {
-        console.log('[JOBS] empty job seq');
+        console.log('[JOBS] empty job queue');
+        console.log('[JOBS] shutdown parser');
         break;
       }
 
+      console.log('[JOBS] take job');
+      console.log('[JOBS] running');
       await job();
     }
 
@@ -30,4 +33,4 @@ class JobSeq {
   }
 }
 
-export const JOBS = new JobSeq();
+export const JOBS = new DeployJobQueue();
