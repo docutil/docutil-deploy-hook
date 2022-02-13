@@ -1,0 +1,9 @@
+---
+port: 9000
+workspace: ws
+sites:
+  - id: yuekcc
+    repo_url: https://ghproxy.com/https://github.com/yuekcc/yuekcc.github.io
+    install_dir: /opt/lambdadriver/www
+    auth_token: xxxxxxxxxx
+
