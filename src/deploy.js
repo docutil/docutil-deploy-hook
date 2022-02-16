@@ -1,4 +1,3 @@
-import path from 'path';
 import { $ } from 'zx';
 
 export async function clone(repoUrl, dest) {
@@ -9,23 +8,8 @@ export async function clone(repoUrl, dest) {
   }
 }
 
-async function cleanDotFiles(dir) {
-  await $`test -d .git && rm -rf .git`;
-
-  const fileList = await $`find ${dir} -type f`;
-  const removes = fileList.stdout
-    .split('\n')
-    .map(it => `${it || ''}`.trim())
-    .map(it => {
-      return {
-        basename: path.basename(it),
-        path: it,
-      };
-    })
-    .filter(it => it.basename.startsWith('.'))
-    .map(it => $`rm ${it.path}`);
-
-  return Promise.all(removes);
+function cleanDotFiles(dir) {
+  return $`find ${dir} -name ".*" -exec rm -rf {} +`;
 }
 
 async function emptyDir(path) {
@@ -38,11 +22,12 @@ async function emptyDir(path) {
     throw new Error('emptyDir failed, not allowed');
   }
 
-  return $`rm -rf ${path}`;
+  await $`rm -rf ${path}`;
+  await $`mkdir -p ${path}`;
 }
 
 export async function install(installPath) {
   await cleanDotFiles('.');
-  await emptyDir(`${installPath + '/*'}`);
+  await emptyDir(installPath);
   await $`cp -af * ${installPath}`;
 }
