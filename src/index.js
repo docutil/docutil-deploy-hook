@@ -40,54 +40,55 @@ function printHelpAndExit() {
   process.exit(0);
 }
 
-!(async () => {
-  const argv = parseFlags(process.argv.slice(2));
+const argv = parseFlags(process.argv.slice(2));
 
-  if (argv.version || argv.v) {
-    printVersionAndExit();
+if (argv.version || argv.v) {
+  printVersionAndExit();
+}
+
+if (argv.help || argv.h) {
+  printHelpAndExit();
+}
+
+const configFile = argv.config || argv.c || 'docutil-deploy.config.yml';
+const CONFIG = await readConfig(configFile);
+
+const server = http.createServer(async (req, res) => {
+  console.log('[HTTP] handle request');
+
+  const url = new URL(req.url, `http://${req.headers.host}`);
+
+  if (!url.pathname.startsWith('/docutil-deploy')) {
+    res.writeHead(404);
+    res.end('notfound');
+    return;
   }
 
-  if (argv.help || argv.h) {
-    printHelpAndExit();
-  }
+  const siteName = url.searchParams.get('site');
+  const token = url.searchParams.get('token');
 
-  const configFile = argv.config || argv.c || 'docutil-deploy.config.yml';
-  const CONFIG = await readConfig(configFile);
+  console.log(`[HTTP] get url = %s`, url);
+  console.log(`[HTTP] get search parameters: siteName = %s, token = %s`, siteName, token);
 
-  const server = http.createServer(async (req, res) => {
-    console.log('[HTTP] handle request');
-
-    const url = new URL(req.url, `http://${req.headers.host}`);
-
-    if (!url.pathname.startsWith('/docutil-deploy')) {
-      res.writeHead(404);
-      res.end('notfound');
-      return;
+  setTimeout(() => {
+    const createJob = async () => {
+      try {
+        console.log(`[HANDLER] ==== begin run hook ====`);
+        await runHook(CONFIG, siteName, token);
+      } catch (err) {
+        console.warn('[HANDLER] error: %s', err);
+      } finally {
+        console.log('[HANDLER] ==== run hook completed ====');
+      }
     }
 
-    const siteName = url.searchParams.get('site');
-    const token = url.searchParams.get('token');
+    JOBS.add(createJob, siteName);
+  }, 0);
 
-    console.log(`[HTTP] get url = %s`, url);
-    console.log(`[HTTP] get search parameters: siteName = %s, token = %s`, siteName, token);
+  res.end('ok');
+});
 
-    setTimeout(() => {
-      JOBS.add(async () => {
-        try {
-          console.log(`[HANDLER] ==== begin run hook ====`);
-          await runHook(CONFIG, siteName, token);
-        } catch (err) {
-          console.warn('[HANDLER] error: %s', err);
-        } finally {
-          console.log('[HANDLER] ==== run hook completed ====');
-        }
-      });
-    }, 0);
+server.listen(CONFIG.port, CONFIG.host, () => {
+  console.log('[HTTP] server start at %s:%d', CONFIG.host, CONFIG.port);
+});
 
-    res.end('ok');
-  });
-
-  server.listen(CONFIG.port, CONFIG.host, () => {
-    console.log('[HTTP] server start at %s:%d', CONFIG.host, CONFIG.port);
-  });
-})();
