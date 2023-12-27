@@ -3,7 +3,7 @@ port: 9000
 host: 0.0.0.0
 sites:
   - id: yuekcc
-    repo_url: https://ghproxy.com/https://github.com/yuekcc/yuekcc.github.io
-    install_dir: /opt/lambdadriver/www
-    auth_token: xxxxxxxxxx
+    repo_url: https://github.moeyy.xyz/https://github.com/yuekcc/yuekcc.github.io
+    install_dir: /home/feng/projects/docutil-deploy-hook/dist/www
+    auth_token: '123456'
 
