@@ -1,35 +1,26 @@
 class DeployJobQueue {
   constructor() {
-    this._jobs = [];
-    this._completed = true;
+    this._jobs = new Map();
   }
 
-  add(job) {
+  /**
+   * 添加任务
+   * @param {() => Promise<void>} createJob 
+   * @param {string} id 
+   */
+  add(createJob, id) {
     console.log('[JOBS] add job');
 
-    this._jobs.push(job);
-    if (this._completed) {
-      console.log('[JOBS] start parser');
-      this._completed = false;
-      this.run();
+    if (!this._jobs.has(id)) {
+      console.log('[JOBS] createJob with id =', id);
+      const wrappedJOb = createJob().finally(() => {
+        this._jobs.delete(id);
+      });
+
+      this._jobs.set(id, wrappedJOb);
+    } else {
+      console.log('[JOBS] exists same job indexed by id, id =', id);
     }
-  }
-
-  async run() {
-    for (;;) {
-      const job = this._jobs.pop();
-      if (!job) {
-        console.log('[JOBS] empty job queue');
-        console.log('[JOBS] shutdown parser');
-        break;
-      }
-
-      console.log('[JOBS] take job');
-      console.log('[JOBS] running');
-      await job();
-    }
-
-    this._completed = true;
   }
 }
 
