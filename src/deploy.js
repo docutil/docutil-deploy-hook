@@ -9,7 +9,7 @@ export async function clone(repoUrl, dest) {
 }
 
 function cleanDotFiles(dir) {
-  return $`find ${dir} -name ".*" -exec rm -rf {} +`;
+  return $`find ${dir} -name '.*' -and -not -name '.' -print -exec rm -rf {} +`;
 }
 
 async function emptyDir(path) {
