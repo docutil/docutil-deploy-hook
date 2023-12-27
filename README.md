@@ -7,8 +7,11 @@
 ### 启动服务
 
 ```sh
-node index.js -c docutil-deploy.config.yml
+bun index.js -c docutil-deploy.config.yml
 ```
+
+需要 [bun v1+](https://bun.sh)。
+
 
 ### 配置 webhook
 
