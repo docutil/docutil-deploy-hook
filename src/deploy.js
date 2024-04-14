@@ -1,10 +1,11 @@
 import { $ } from 'bun';
 
 export async function clone(repoUrl, dest) {
-  const cloned = await $`git clone ${repoUrl} --depth=1 ${dest}`.exitCode;
-
-  if (cloned !== 0) {
-    throw new Error('clone repo failed');
+  try {
+    await $`pwd`
+    await $`git clone ${repoUrl} --depth=1 ${dest}`;
+  } catch (err) {
+    throw new Error(`clone repo failed: ${err}`);
   }
 }
 
@@ -27,6 +28,7 @@ async function emptyDir(path) {
 }
 
 export async function install(installPath) {
+  await $`pwd`
   await cleanDotFiles('.');
   await emptyDir(installPath);
   await $`cp -af * ${installPath}`;

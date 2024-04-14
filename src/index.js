@@ -22,9 +22,13 @@ async function runHook(config, siteName, authToken) {
   }
 
   const dest = await fs.mkdtemp(path.join(os.tmpdir(), 'docutil_deploy-'));
-  await $`cd ${dest}`;
+
+  await $.cwd(dest);
   await clone(repo_url, '.');
   await install(install_dir);
+  
+  // 删除临时目录
+  await fs.rmdir(dest, { recursive: true });
 }
 
 function printVersionAndExit() {
@@ -110,8 +114,6 @@ server.listen(CONFIG.port, CONFIG.host, () => {
   console.log('[HTTP] server start at %s:%d', CONFIG.host, CONFIG.port);
 
   for (const it of CONFIG.sites) {
-    console.log(
-      `[HTTP] hook endpoint: /docutil-deploy?site=${it.id}&token=${it.auth_token}`,
-    );
+    console.log(`[HTTP] hook endpoint: /docutil-deploy?site=${it.id}&token=${it.auth_token}`);
   }
 });
