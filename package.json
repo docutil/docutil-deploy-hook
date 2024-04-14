@@ -1,6 +1,7 @@
 {
   "name": "docutil-deploy-hook",
   "version": "2.0.0",
+  "type": "module",
   "author": "zhanlefeng",
   "main": "dist/index.mjs",
   "devDependencies": {
@@ -8,8 +9,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "start": "bun dist/index.mjs",
-    "build": "bun build --outfile=dist/index.mjs --format=esm --target=bun --bundle --minify src/index.js"
+    "start": "bun run --smol dist/index.js",
+    "build": "bun build --outfile=dist/index.js --format=esm --target=bun --bundle --minify src/index.js"
   },
   "dependencies": {
     "zx": "^8.0.1"

@@ -9,7 +9,8 @@
 ### 启动服务
 
 ```sh
-bun index.js -c docutil-deploy.config.json
+bun run build
+bun run --smol dist/index.js -c docutil-deploy.config.json
 ```
 
 ### 配置 webhook
