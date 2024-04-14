@@ -1,0 +1,14 @@
+[Unit]
+Description=Docutil Deploy Service
+After=network.target
+
+[Service]
+Type=simple
+User=lighthouse
+Group=lighthouse
+ExecStart=bun run --smol index.js
+WorkingDirectory=/opt/docutil-deploy
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
