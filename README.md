@@ -19,6 +19,18 @@ bun run --smol dist/index.js -c docutil-deploy.config.json
 
 payload url: `<domain>/docutil-deploy/deploy?site=SiteName&token=SOME_TOKEN_FOR_AUTH`，其他选择默认。
 
+### 配置
+
+- `port` 端口
+- `host` 监听的 IP，一般可以用 127.0.0.1。推荐在 docutil-deploy 前增加 nginx/caddy 用于处理 SSL 证书
+- `sites` 是一个站点配置 **数组**。站点配置字段如下：
+  - `id` 唯一标识
+  - `repo_url` GIT 仓库地址。
+  - `auth_token` Web Hook 鉴权，一般使用随机生成的字符串
+  - `install_dir` 站点部署目录
+
+可以参考 [docutil-deploy.config.json](./docutil-deploy.config.json)
+
 ## LICENSE
 
 [MIT](LICENSE)
