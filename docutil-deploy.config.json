@@ -1,0 +1,12 @@
+{
+  "port": 9000,
+  "host": "127.0.0.1",
+  "sites": [
+    {
+      "id": "yuekcc",
+      "repo_url": "https://github.moeyy.xyz/https://github.com/yuekcc/yuekcc.github.io",
+      "auth_token": "123456",
+      "install_dir": "/home/feng/projects/docutil-deploy-hook/dist/www"
+    }
+  ]
+}

@@ -7,7 +7,7 @@
 ### 启动服务
 
 ```sh
-bun index.js -c docutil-deploy.config.yml
+bun index.js -c docutil-deploy.config.json
 ```
 
 需要 [bun v1+](https://bun.sh)。

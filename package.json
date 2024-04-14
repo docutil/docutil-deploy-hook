@@ -4,15 +4,15 @@
   "author": "zhanlefeng",
   "main": "dist/index.mjs",
   "devDependencies": {
+    "@types/bun": "^1.0.12",
     "esbuild": "^0.20.2"
   },
   "license": "MIT",
   "scripts": {
     "start": "node dist/index.mjs",
-    "build": "esbuild --outfile=dist/index.mjs --format=esm --platform=node --target=node20 --bundle --minify src/index.js"
+    "build": "esbuild --outfile=dist/index.mjs --external:bun --format=esm --platform=node --target=node20 --bundle --minify src/index.js"
   },
   "dependencies": {
-    "yaml": "^2.4.1",
     "zx": "^8.0.1"
   }
 }

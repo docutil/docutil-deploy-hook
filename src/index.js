@@ -3,7 +3,7 @@ import http from "node:http";
 import os from "node:os";
 import path from "node:path";
 import { parseArgs } from "node:util";
-import { cd } from "zx";
+import { $ } from "bun";
 
 import { readConfig } from "./config";
 import { clone, install } from "./deploy";
@@ -22,8 +22,7 @@ async function runHook(config, siteName, authToken) {
 	}
 
 	const dest = await fs.mkdtemp(path.join(os.tmpdir(), "docutil_deploy-"));
-	cd(dest);
-
+	await $`cd ${dest}`;
 	await clone(repo_url, ".");
 	await install(install_dir);
 }
@@ -36,7 +35,7 @@ function printVersionAndExit() {
 function printHelpAndExit() {
 	console.log(`docutil-deploy service, flags:
 \t-v, --version: show version
-\t-c, --config <config.yml>: set config file, if no parents, it will be './docutil-deploy.config.yml' as default
+\t-c, --config <config.json>: set config file, if no parents, it will be './docutil-deploy.config.json' as default
 \t-h, --help: show help`);
 
 	process.exit(0);
@@ -60,7 +59,7 @@ const { values: cliFlags } = parseArgs({
 		config: {
 			type: "string",
 			short: "c",
-			default: "docutil-deploy.config.yml",
+			default: "docutil-deploy.config.json",
 		},
 	},
 });

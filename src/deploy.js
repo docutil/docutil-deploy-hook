@@ -1,4 +1,4 @@
-import { $ } from 'zx';
+import { $ } from 'bun';
 
 export async function clone(repoUrl, dest) {
   const cloned = await $`git clone ${repoUrl} --depth=1 ${dest}`.exitCode;
