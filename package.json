@@ -13,5 +13,8 @@
   },
   "dependencies": {
     "zx": "^8.0.1"
+  },
+  "engines": {
+    "bun": "^1.1.0"
   }
 }

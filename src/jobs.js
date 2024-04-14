@@ -5,8 +5,8 @@ class DeployJobQueue {
 
   /**
    * 添加任务
-   * @param {() => Promise<void>} createJob 
-   * @param {string} id 
+   * @param {() => Promise<void>} createJob
+   * @param {string} id
    */
   add(createJob, id) {
     console.log('[JOBS] add job');

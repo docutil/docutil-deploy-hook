@@ -1,118 +1,117 @@
-import fs from "node:fs/promises";
-import http from "node:http";
-import os from "node:os";
-import path from "node:path";
-import { parseArgs } from "node:util";
-import { $ } from "bun";
+import fs from 'node:fs/promises';
+import http from 'node:http';
+import os from 'node:os';
+import path from 'node:path';
+import { parseArgs } from 'node:util';
+import { $ } from 'bun';
 
-import { readConfig } from "./config";
-import { clone, install } from "./deploy";
-import { JOBS } from "./jobs";
-import { VERSION } from "./version";
+import { readConfig } from './config';
+import { clone, install } from './deploy';
+import { JOBS } from './jobs';
+import { VERSION } from './version';
 
 async function runHook(config, siteName, authToken) {
-	const siteConfig = config.sites.find((it) => it.id === siteName);
-	if (!siteConfig) {
-		throw new Error("unknown site");
-	}
+  const siteConfig = config.sites.find((it) => it.id === siteName);
+  if (!siteConfig) {
+    throw new Error('unknown site');
+  }
 
-	const { repo_url, install_dir, auth_token } = siteConfig || {};
-	if (authToken !== auth_token) {
-		throw new Error("auth failed");
-	}
+  const { repo_url, install_dir, auth_token } = siteConfig || {};
+  if (authToken !== auth_token) {
+    throw new Error('auth failed');
+  }
 
-	const dest = await fs.mkdtemp(path.join(os.tmpdir(), "docutil_deploy-"));
-	await $`cd ${dest}`;
-	await clone(repo_url, ".");
-	await install(install_dir);
+  const dest = await fs.mkdtemp(path.join(os.tmpdir(), 'docutil_deploy-'));
+  await $`cd ${dest}`;
+  await clone(repo_url, '.');
+  await install(install_dir);
 }
 
 function printVersionAndExit() {
-	console.log(VERSION || "no_set");
-	process.exit(0);
+  console.log(VERSION || 'no_set');
+  process.exit(0);
 }
 
 function printHelpAndExit() {
-	console.log(`docutil-deploy service, flags:
+  console.log(`docutil-deploy service, flags:
 \t-v, --version: show version
 \t-c, --config <config.json>: set config file, if no parents, it will be './docutil-deploy.config.json' as default
 \t-h, --help: show help`);
 
-	process.exit(0);
+  process.exit(0);
 }
 
 const { values: cliFlags } = parseArgs({
-	args: process.argv,
-	strict: true,
+  args: process.argv,
+  strict: true,
   allowPositionals: true,
-	options: {
-		help: {
-			type: "boolean",
-			short: "h",
-			default: false,
-		},
-		version: {
-			type: "boolean",
-			short: "v",
-			default: false,
-		},
-		config: {
-			type: "string",
-			short: "c",
-			default: "docutil-deploy.config.json",
-		},
-	},
+  options: {
+    help: {
+      type: 'boolean',
+      short: 'h',
+      default: false,
+    },
+    version: {
+      type: 'boolean',
+      short: 'v',
+      default: false,
+    },
+    config: {
+      type: 'string',
+      short: 'c',
+      default: 'docutil-deploy.config.json',
+    },
+  },
 });
 
 if (cliFlags.version) {
-	printVersionAndExit();
+  printVersionAndExit();
 }
 
 if (cliFlags.help) {
-	printHelpAndExit();
+  printHelpAndExit();
 }
 
 const CONFIG = await readConfig(cliFlags.config);
 
 const server = http.createServer(async (req, res) => {
-	console.log("[HTTP] handle request");
+  console.log('[HTTP] handle request');
 
-	const url = new URL(req.url, `http://${req.headers.host}`);
+  const url = new URL(req.url, `http://${req.headers.host}`);
 
-	if (!url.pathname.startsWith("/docutil-deploy")) {
-		res.writeHead(404);
-		res.end("notfound");
-		return;
-	}
+  if (!url.pathname.startsWith('/docutil-deploy')) {
+    res.writeHead(404);
+    res.end('notfound');
+    return;
+  }
 
-	const siteName = url.searchParams.get("site");
-	const token = url.searchParams.get("token");
+  const siteName = url.searchParams.get('site');
+  const token = url.searchParams.get('token');
 
-	console.log("[HTTP] get url = %s", url);
-	console.log(
-		"[HTTP] get search parameters: siteName = %s, token = %s",
-		siteName,
-		token,
-	);
+  console.log('[HTTP] get url = %s', url);
+  console.log('[HTTP] get search parameters: siteName = %s, token = %s', siteName, token);
 
-	setTimeout(() => {
-		const createJob = async () => {
-			try {
-				console.log("[HANDLER] ==== begin run hook ====");
-				await runHook(CONFIG, siteName, token);
-			} catch (err) {
-				console.warn("[HANDLER] error: %s", err);
-			} finally {
-				console.log("[HANDLER] ==== run hook completed ====");
-			}
-		};
+  const createJob = async () => {
+    try {
+      console.log('[HANDLER] ==== begin run hook ====');
+      await runHook(CONFIG, siteName, token);
+    } catch (err) {
+      console.warn('[HANDLER] error: %s', err);
+    } finally {
+      console.log('[HANDLER] ==== run hook completed ====');
+    }
+  };
+  JOBS.add(createJob, siteName);
 
-		JOBS.add(createJob, siteName);
-	}, 0);
-
-	res.end("ok");
+  res.end('ok');
 });
 
 server.listen(CONFIG.port, CONFIG.host, () => {
-	console.log("[HTTP] server start at %s:%d", CONFIG.host, CONFIG.port);
+  console.log('[HTTP] server start at %s:%d', CONFIG.host, CONFIG.port);
+
+  for (const it of CONFIG.sites) {
+    console.log(
+      `[HTTP] hook endpoint: /docutil-deploy?site=${it.id}&token=${it.auth_token}`,
+    );
+  }
 });
