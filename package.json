@@ -1,52 +1,18 @@
 {
   "name": "docutil-deploy-hook",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "2.0.0",
+  "author": "zhanlefeng",
+  "main": "dist/index.mjs",
+  "devDependencies": {
+    "esbuild": "^0.20.2"
+  },
+  "license": "MIT",
   "scripts": {
     "start": "node dist/index.mjs",
-    "build": "esbuild --outfile=dist/index.mjs --format=esm --platform=node --target=node16 --bundle --minify src/index.js"
-  },
-  "author": "zhanlefeng",
-  "license": "MIT",
-  "prettier": {
-    "printWidth": 120,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "all",
-    "arrowParens": "avoid",
-    "endOfLine": "auto"
-  },
-  "eslintConfig": {
-    "env": {
-      "browser": true,
-      "commonjs": true,
-      "es2021": true,
-      "jest": true,
-      "mocha": true,
-      "node": true
-    },
-    "parserOptions": {
-      "sourceType": "module"
-    },
-    "plugins": [
-      "prettier"
-    ],
-    "extends": [
-      "eslint:recommended",
-      "plugin:prettier/recommended"
-    ]
-  },
-  "devDependencies": {
-    "esbuild": "^0.14.21",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "prettier": "^2.4.0"
+    "build": "esbuild --outfile=dist/index.mjs --format=esm --platform=node --target=node20 --bundle --minify src/index.js"
   },
   "dependencies": {
-    "fs-extra": "^10.0.0",
-    "js-yaml": "^3.14.1",
-    "minimist": "^1.2.5",
-    "zx": "^5.0.0"
+    "yaml": "^2.4.1",
+    "zx": "^8.0.1"
   }
 }

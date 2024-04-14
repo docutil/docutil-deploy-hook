@@ -1,6 +1,6 @@
 ---
 port: 9000
-host: 0.0.0.0
+host: 127.0.0.1
 sites:
   - id: yuekcc
     repo_url: https://github.moeyy.xyz/https://github.com/yuekcc/yuekcc.github.io

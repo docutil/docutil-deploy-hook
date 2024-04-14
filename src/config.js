@@ -1,9 +1,8 @@
-import fs from 'fs-extra';
-import YAML from 'js-yaml';
+import fs from "node:fs/promises";
+import YAML from "yaml";
 
 export async function readConfig(path) {
-  console.log('[CONFIG] using config file: %s', path);
-
-  const contents = await fs.readFile(path);
-  return YAML.load(contents);
+	console.log("[CONFIG] using config file: %s", path);
+	const doc = await fs.readFile(path, "utf-8");
+	return YAML.parse(doc);
 }
