@@ -10,7 +10,7 @@
   "license": "MIT",
   "scripts": {
     "start": "bun run --smol dist/index.js",
-    "build": "bun build --outfile=dist/index.js --format=esm --target=bun --bundle --minify src/index.js"
+    "build": "bun build --outfile=dist/index.mjs --format=esm --target=bun --bundle src/index.js"
   },
   "dependencies": {
     "zx": "^8.0.1"
